@@ -1,0 +1,42 @@
+<CustomLabel@Label>:
+	font_size: 100
+	color: 1, 0.8, 0, 1
+
+<CustomScatter@Scatter>:
+	do_rotation: False
+	do_scale: False
+	do_translation: False
+
+<GaugeWidget>:
+	gauge_sc: gauge_sc
+	needle_sc: needle_sc
+	size_hint: None, None
+	size: 800, 800
+
+	CustomScatter:
+		id: gauge_sc
+		Image:
+			source: root.file_gauge_outer
+			size: root.size
+			color: root.gauge_outer_color
+		Image:
+			source: root.file_gauge_inner
+			size: root.size
+			color: root.gauge_inner_color
+
+	CustomScatter:
+		id: needle_sc
+		size: root.size
+		Image:
+			source: root.file_needle
+			size: root.size
+			color: root.needle_color
+
+#	RelativeLayout: # Main value
+#		pos: root.center_x - self.width / 2, root.center_y - self.height / 1.2
+#		size: root.size
+#		Image:
+#			source: root.file_label_box
+#		CustomLabel:
+#			id: gauge_value_str
+#			text: str(root.gauge_value)

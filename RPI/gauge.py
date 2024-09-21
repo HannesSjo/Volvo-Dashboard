@@ -62,15 +62,14 @@ class GaugeWidget(Widget):
 
         self.show_anim = show_anim
 
-        self.bind(gauge_value=self.update)
-
         if self.show_anim:
             Clock.schedule_once(self.spin_needle, 0)
 
         self.label_box = LabelBox(value=self.gauge_value)
         self.add_widget(self.label_box)
 
-    def update(self, *args):
+    def Update(self, value):
+        self.gauge_value = value
         self.rotate_needle()
         self.set_needle_color()
         self.label_box.label.text = str(round(self.gauge_value, 2))

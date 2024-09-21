@@ -1,14 +1,13 @@
 from kivy.app import App
-from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.clock import Clock
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.relativelayout import RelativeLayout
 #from dataFetcher import DataFetcher
 from label_box import LabelBox
 from gauge import GaugeWidget
 from dataFetcherDemo import DataFetcher
+from components.miniGauge import MiniGauge
 import threading
-import random
 
 class Dashboard(App):
     size = (800, 800)
@@ -20,42 +19,47 @@ class Dashboard(App):
         super().__init__(**kwargs)
         self.data_lock = threading.Lock()
         self.shared_data = {}
-        self.label = None
         self.data_fetcher = DataFetcher(self.data_lock, self.shared_data)
 
     def build(self):
         self.data_fetcher.start()
+        layout = RelativeLayout()
         Window.size = self.size
 
-        box = BoxLayout(orientation='horizontal', padding=5)
-
-        self.label = Label()
-        self.gauge = GaugeWidget(
+        self.afrGauge = GaugeWidget(
             min_val=self.gauge_min_val, 
             max_val=self.gauge_max_val,
             yellow_threshold=11,
             green_threshold=15,
             show_anim=False,
         )
+        layout.add_widget(self.afrGauge)
 
 
-        box.add_widget(self.gauge)
+        self.mapGauge = MiniGauge(
+            layout,
+            (400,400),
+            10, 0, 300,
+            250,
+            "kPa"
+        )
 
         Clock.schedule_interval(self.update_display, (1/self.fps))
-        self.gauge.gauge_value = 14.7
 
-        return box
-
+        return layout
     def on_stop(self):
         self.data_fetcher.stop()
 
-    def update_display(self, dt):
+    def update_display(self, dt): 
         if self.shared_data == {}:
             return
 
         with self.data_lock:
-            AFR = str(self.shared_data['AFR'])
-            self.gauge.gauge_value = AFR
+            MAP = self.shared_data['MAP']
+            AFR = self.shared_data['AFR']
+
+        self.mapGauge.Update(MAP)
+        self.afrGauge.Update(AFR)
 
 if __name__ == '__main__':
     Dashboard().run()

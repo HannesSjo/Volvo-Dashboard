@@ -1,9 +1,10 @@
 from kivy.app import App
-from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.clock import Clock
+from kivy.uix.relativelayout import RelativeLayout
 #from dataFetcher import DataFetcher
 from dataFetcherDemo import DataFetcher
+from components.miniGauge import MiniGauge
 import threading
 
 class Dashboard(App):
@@ -14,18 +15,16 @@ class Dashboard(App):
         super().__init__(**kwargs)
         self.data_lock = threading.Lock()
         self.shared_data = {}
-        self.label = None
         self.data_fetcher = DataFetcher(self.data_lock, self.shared_data)
 
     def build(self):
         self.data_fetcher.start()
+        layout = RelativeLayout()
         Window.size = (self.size, self.size)
-
-        self.label = Label()
-
-
         Clock.schedule_interval(self.update_display, (1/self.fps))
-        return self.label
+        self.mapGauge = MiniGauge(layout, (400,400), 10, 0, 300, 250, "kPa")
+
+        return layout
 
     def on_stop(self):
         self.data_fetcher.stop()
@@ -35,8 +34,9 @@ class Dashboard(App):
             return
         
         with self.data_lock:
-            AFR = str(self.shared_data['AFR'])
-            self.label.text = AFR
+            MAP = self.shared_data['MAP']
+
+        self.mapGauge.Update(MAP)
 
 if __name__ == '__main__':
     Dashboard().run()

@@ -30,7 +30,8 @@ class DataFetcher:
             time.sleep(0.2)
 
     def fetchData(self):
-        return ""
+        self.data['AFR'] += 0.01
+        self.data['MAP'] += 1
 
     def stop(self):
         self.is_running = False

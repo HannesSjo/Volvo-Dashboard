@@ -7,7 +7,7 @@ from kivy.uix.widget import Widget
 
 from os.path import join, dirname, abspath
 
-from label_box import LabelBox
+from components.label_box import LabelBox
 
 class GaugeWidget(Widget):
     path = dirname(abspath(__file__))
@@ -19,8 +19,8 @@ class GaugeWidget(Widget):
     min_rotation = 138.5
     max_rotation = -138.5
 
-    yellow_threshold = 11
-    green_threshold = 16
+    yellow_threshold = 12.0
+    green_threshold = 17.4
 
     # Defaults
     gauge_outer_color = (0.08, 0.08, 0.08)
@@ -31,8 +31,8 @@ class GaugeWidget(Widget):
     needle_under_color = (0.98, 0.90, 0)
     show_anim = False
 
-    min_val = 8
-    max_val = 20
+    min_val = 8.0
+    max_val = 20.0
     gauge_value = NumericProperty(0.0)
 
     def __init__( self,
@@ -72,20 +72,33 @@ class GaugeWidget(Widget):
         self.gauge_value = value
         self.rotate_needle()
         self.set_needle_color()
-        self.label_box.label.text = str(round(self.gauge_value, 2))
+        self.label_box.label.text = str("{:.2f}".format(self.gauge_value))
 
     def rotate_needle(self):
         normalized_value = (self.gauge_value - self.min_val) / (self.max_val - self.min_val)
         rotation = (self.min_rotation + normalized_value * (self.max_rotation - self.min_rotation))
+        if rotation <= self.max_rotation:
+            rotation = self.max_rotation
+        elif rotation >= self.min_rotation:
+            rotation = self.min_rotation
+
         self.set_needle_pos(rotation)
 
     def set_needle_color(self):
-        if self.gauge_value > self.green_threshold:
-            self.needle_color = self.needle_over_color
-        elif self.gauge_value > self.yellow_threshold:
-            self.needle_color = self.needle_perf_color
+        if self.gauge_value <= 14.7:
+            color = self.interpolate_color([1, 1, 0, 1], [0, 1, 0, 1], self.yellow_threshold, 14.7, self.gauge_value)
         else:
-            self.needle_color = self.needle_under_color
+            color = self.interpolate_color([0, 1, 0, 1], [1, 0, 0, 1], 14.7, self.green_threshold, self.gauge_value)
+
+        self.needle_color = color
+
+    def interpolate_color(self, color_start, color_end, value_start, value_end, value):
+        ratio = (value - value_start) / (value_end - value_start)
+
+        return [
+            color_start[i] + (color_end[i] - color_start[i]) * ratio
+            for i in range(4)
+        ]
 
     def set_needle_pos(self, pos):
         self.needle_sc.rotation = pos

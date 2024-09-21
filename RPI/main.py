@@ -3,7 +3,6 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.uix.relativelayout import RelativeLayout
 #from dataFetcher import DataFetcher
-from label_box import LabelBox
 from gauge import GaugeWidget
 from dataFetcherDemo import DataFetcher
 from components.miniGauge import MiniGauge
@@ -12,8 +11,6 @@ import threading
 class Dashboard(App):
     size = (800, 800)
     fps = 24
-    gauge_max_val = 20
-    gauge_min_val = 8
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -27,8 +24,8 @@ class Dashboard(App):
         Window.size = self.size
 
         self.afrGauge = GaugeWidget(
-            min_val=self.gauge_min_val, 
-            max_val=self.gauge_max_val,
+            min_val=8, 
+            max_val=20,
             yellow_threshold=11,
             green_threshold=15,
             show_anim=False,
@@ -38,9 +35,9 @@ class Dashboard(App):
 
         self.mapGauge = MiniGauge(
             layout,
-            (400,400),
+            (400,420),
             10, 0, 300,
-            250,
+            300,
             "kPa"
         )
 

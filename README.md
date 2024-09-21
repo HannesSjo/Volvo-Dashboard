@@ -18,3 +18,16 @@
 | OT             | HI   | 0x536  | 6      |
 | Lambda target  | LOW  | 0x527  | 6      |
 | Error count    | HI   | 0x534  | 4      |
+
+
+
+# Data on Page 1
+
+| DATA |
+|------|
+| MAP  |
+| AFR  |
+| IAT  |
+| EGT  |
+| OP   |
+| OT   |

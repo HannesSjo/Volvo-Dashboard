@@ -35,9 +35,9 @@ class Dashboard(App):
 
         self.mapGauge = MiniGauge(
             layout,
-            (400,400),
+            (400,420),
             10, 0, 300,
-            250,
+            300,
             "kPa"
         )
 

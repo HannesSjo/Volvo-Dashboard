@@ -6,7 +6,7 @@ class Constants:
     def white():
         return rgba(245,245,245)
     @staticmethod
-    def dakGrey():
+    def darkGrey():
         return rgba(25,25,25)
     @staticmethod
     def black():

@@ -3,6 +3,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.uix.relativelayout import RelativeLayout
 #from dataFetcher import DataFetcher
+from components.label_box import LabelBox
 from gauge import GaugeWidget
 from dataFetcherDemo import DataFetcher
 from components.miniGauge import MiniGauge
@@ -36,10 +37,12 @@ class Dashboard(App):
         self.mapGauge = MiniGauge(
             layout,
             (400,420),
-            10, 0, 300,
+            10.0, 0.0, 300.0,
             300,
             "kPa"
         )
+
+        # self.iatLabel = LabelBox(layout=layout)
 
         Clock.schedule_interval(self.update_display, (1/self.fps))
 

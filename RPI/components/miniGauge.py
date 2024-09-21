@@ -23,7 +23,7 @@ class MiniGauge:
         
         self.value = newValue
         
-        self.valueLabel.text = str(self.value)
+        self.valueLabel.text = "{:.1f}".format(self.value)
 
         angle = 270 + ((self.value - self.minValue) / (self.maxValue - self.minValue)) * 180
         
@@ -33,7 +33,7 @@ class MiniGauge:
         self.gauge_drawing_canvas.clear()
 
         with self.gauge_drawing_canvas:
-            Color(*Constants.dakGrey())
+            Color(*Constants.darkGrey())
             Line(circle=(self.size / 2, self.size / 2, self.size / 2 - 10, 270, 270 + 180), width=self.getSize(4))
             Color(*Constants.white())
             Line(circle=(self.size / 2, self.size / 2, self.size / 2 - 10, 270, angle), width=self.getSize(3))
@@ -42,7 +42,7 @@ class MiniGauge:
         self.valueLabel = Label(text=str(self.value),
                                 font_name=Constants.font(),
                                 size_hint=(None, None),
-                                font_size=self.getFontSize(12))
+                                font_size=self.getFontSize(10))
         
         self.unitLabel = Label(text=self.unit,
                                 font_name=Constants.font(),

@@ -30,6 +30,8 @@ class MiniGauge:
         self.updateGauge(angle)
 
     def updateGauge(self, angle):
+        angle = max(270, min(450, angle))
+
         self.gauge_drawing_canvas.clear()
 
         with self.gauge_drawing_canvas:

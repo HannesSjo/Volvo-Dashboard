@@ -1,5 +1,4 @@
 from os.path import abspath, dirname, join
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.graphics import Color, Rectangle
@@ -32,7 +31,7 @@ class ImageBox(RelativeLayout):
         layout.add_widget(self)
 
     def create_label(self):
-        adjusted_label_position = (self.pos[0] + 135, self.pos[1] + 20) if self.align_left else (self.pos[0] + 50, self.pos[1] + 20)
+        adjusted_label_position = (self.pos[0] + 135, self.pos[1] + 20) if self.align_left else (self.pos[0] + 55, self.pos[1] + 20)
         self.label = Label(text="0", size_hint=(None, None), font_name=Constants.font(), font_size=self.font_size, color=self.font_color, pos=adjusted_label_position)
         self.label.bind(texture_size=self.update_rect)
         self.add_widget(self.label)

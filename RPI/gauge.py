@@ -65,7 +65,7 @@ class GaugeWidget(Widget):
         if self.show_anim:
             Clock.schedule_once(self.spin_needle, 0)
 
-        self.label_box = LabelBox(layout=self, value=self.gauge_value, pos=(200, 200))
+        self.label_box = LabelBox(layout=self, pos=(150, 30))
         self.add_widget(self.label_box)
 
     def Update(self, value):

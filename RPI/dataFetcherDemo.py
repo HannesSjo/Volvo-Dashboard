@@ -31,7 +31,9 @@ class DataFetcher:
 
     def fetchData(self):
         self.data['AFR'] += 0.01
-        self.data['MAP'] += 10
+        self.data['MAP'] += 1
+        self.data['IAT'] += 1.1
+        self.data['OT'] += 1
 
     def stop(self):
         self.is_running = False

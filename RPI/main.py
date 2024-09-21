@@ -25,53 +25,42 @@ class Dashboard(App):
     def build(self):
         self.data_fetcher.start()
         layout = RelativeLayout()
-        Window.size = (self.size, self.size)
-        Clock.schedule_interval(self.update_display, (1/self.fps))
-        self.mapGauge = MiniGauge(layout, (400,400), 10, 0, 300, 250, "kPa")
-
-        return layout
         Window.size = self.size
 
-        box = BoxLayout(orientation='horizontal', padding=5)
-
-        self.label = Label()
-        self.gauge = GaugeWidget(
+        self.afrGauge = GaugeWidget(
             min_val=self.gauge_min_val, 
             max_val=self.gauge_max_val,
             yellow_threshold=33,
             green_threshold=66
         )
+        layout.add_widget(self.afrGauge)
 
-        box.add_widget(self.gauge)
+
+        self.mapGauge = MiniGauge(
+            layout,
+            (400,400),
+            10, 0, 300,
+            250,
+            "kPa"
+        )
+
 
         Clock.schedule_interval(self.update_display, (1/self.fps))
-        return box
+        return layout
 
     def on_stop(self):
         self.data_fetcher.stop()
 
-    def update_display(self, dt):
-        ### Testing ###
-        val = self.gauge.gauge_value
-        rand = random.uniform(1,3)
-        if val < self.gauge_min_val:
-            self.gauge.gauge_value = self.gauge_min_val
-        elif val > self.gauge_max_val:
-            self.gauge.gauge_value = self.gauge_max_val
-        else:
-            if rand > 2:
-                self.gauge.gauge_value += 1
-            else:
-                self.gauge.gauge_value -= 1
-        ### /Testing ###
-
+    def update_display(self, dt): 
         if self.shared_data == {}:
             return
 
         with self.data_lock:
             MAP = self.shared_data['MAP']
+            AFR = self.shared_data['AFR']
 
         self.mapGauge.Update(MAP)
+        self.afrGauge.gauge_value(AFR)
 
 if __name__ == '__main__':
     Dashboard().run()

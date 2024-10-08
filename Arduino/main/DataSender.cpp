@@ -1,7 +1,9 @@
 #include "DataSender.h"
 #include <Arduino.h>
 
-void DataSender::sendData() {
+#include "Data.h"
+
+void DataSender::sendData(Data data) {
     //TODO logic
     Serial.println("Sending data...");
 }

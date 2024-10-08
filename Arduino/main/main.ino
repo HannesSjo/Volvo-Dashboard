@@ -1,13 +1,14 @@
 #include "CANHandler.h"
 #include "GaugeManager.h"
 #include "DataSender.h"
+#include "Data.h"
 
 CANHandler canHandler(10);
 GaugeManager gaugeManager;
 DataSender dataSender;
 
 struct can_frame canMsg;
-int FPS = 10;
+int RPS = 10;
 
 void setup() {
     Serial.begin(115200);
@@ -15,16 +16,11 @@ void setup() {
 }
 
 void loop() {
-    if (canHandler.readMessage(&canMsg)) {
-        if (canMsg.can_id == 0x520) {
-            int rpm = canHandler.decodeInt(canMsg, 1);
-            Serial.print("Engine RPM: ");
-            Serial.println(rpm);
-        }
-    }
+    canHandler.readMessage();
+    //TODO read utility data ex speed
+    Data data = canHandler.getData();
+    gaugeManager.updateGauges(); //TODO
+    dataSender.sendData(data); //TODO
 
-    gaugeManager.updateGauges();
-    dataSender.sendData();
-
-    delay(1000 / FPS);
+    delay(1000 / RPS);
 }

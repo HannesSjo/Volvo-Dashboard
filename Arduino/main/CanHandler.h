@@ -2,36 +2,32 @@
 #define CANHANDLER_H
 
 #include <mcp2515.h>
-#include <map>
-#include <tuple>
+#include "Data.h"
 
 class CANHandler {
 public:
     CANHandler(int csPin);
     void initialize();
-    void readMessages();
+    void readMessage();
     
-    int rpm;
-    int tps;
-    int map;
-    float lambda;
-    int intakeAirTemp;
-    int voltage;
-    int coolantTemp;
-    int ethanolPercent;
-    int exhaustGasTemp;
-    int oilPressure;
-    int oilTemp;
-    float lambdaTarget;
-    int errorCount;
+    const Data& getData() const;
 
 private:
     MCP2515 mcp2515;
+    Data data;
 
-    int decodeInt(can_frame msg, int offset, int length, float scale);
+    struct CanMap {
+        uint16_t canId;
+        int offset;
+        float Data::* variable;
+        float scale;
+    };
 
-    std::map<uint16_t, std::vector<std::tuple<int, int*, float>>> canMap;
+    static const int maxMappings = 20;
+    CanMap canMap[maxMappings];
+    int numMappings = 0;
 
+    float decodeFloat(can_frame msg, int offset, int length, float scale);
     void initializeCanMap();
 };
 

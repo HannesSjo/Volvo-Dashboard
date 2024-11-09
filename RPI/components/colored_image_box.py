@@ -11,7 +11,7 @@ class ColoredImageBox(ImageBox):
     def __init__(self, 
                  layout,
                  img_src,
-                 pos=...,
+                 pos,
                  align_left=True,
                  thresh1=thresh1,
                  thresh2=thresh2,

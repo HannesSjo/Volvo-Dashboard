@@ -6,7 +6,7 @@ from kivy.uix.relativelayout import RelativeLayout
 from components.colored_image_box import ColoredImageBox
 from components.image_box import ImageBox
 from gauge import GaugeWidget
-from dataFetcherDemo import DataFetcher
+from dataFetcher import DataFetcher
 from components.miniGauge import MiniGauge
 import threading
 
@@ -65,17 +65,21 @@ class Dashboard(App):
             return
 
         with self.data_lock:
-            MAP = self.shared_data['MAP']
-            AFR = self.shared_data['AFR']
-            IAT = self.shared_data['IAT']
-            OT = self.shared_data['OT']
+            try:
+                MAP = self.shared_data['MAP']
+                AFR = self.shared_data['AFR']
+                IAT = self.shared_data['IAT']
+                OT = self.shared_data['OT']
 
-        self.mapGauge.Update(MAP)
-        self.afrGauge.Update(AFR)
-        self.iatLabel.Update(IAT)
-        self.otLabel.Update(OT)
-        self.opLabel.Update(OT)
-        self.egtLabel.Update(OT)
+                self.mapGauge.Update(MAP)
+                self.afrGauge.Update(AFR)
+                self.iatLabel.Update(IAT)
+                self.otLabel.Update(OT)
+                self.opLabel.Update(OT)
+                self.egtLabel.Update(OT)
+            except KeyError:
+                print("Invalid shared_data: ", self.shared_data)
+
         # self.iatLabel.Update(100)
         # self.otLabel.Update(100)
 

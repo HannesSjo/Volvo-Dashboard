@@ -70,18 +70,18 @@ class Dashboard(App):
                 AFR = self.shared_data['AFR']
                 IAT = self.shared_data['IAT']
                 OT = self.shared_data['OT']
+                OP = self.shared_data['OP']
+                EGT = self.shared_data['EGT']
 
                 self.mapGauge.Update(MAP)
                 self.afrGauge.Update(AFR)
                 self.iatLabel.Update(IAT)
                 self.otLabel.Update(OT)
-                self.opLabel.Update(OT)
-                self.egtLabel.Update(OT)
+                self.opLabel.Update(OP)
+                self.egtLabel.Update(EGT)
             except KeyError:
                 print("Invalid shared_data: ", self.shared_data)
 
-        # self.iatLabel.Update(100)
-        # self.otLabel.Update(100)
 
 if __name__ == '__main__':
     Dashboard().run()

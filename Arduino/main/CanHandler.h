@@ -6,6 +6,7 @@
 
 class CANHandler {
 public:
+    CANHandler();
     CANHandler(int csPin);
     void initialize();
     void readMessage();
@@ -17,13 +18,13 @@ private:
     Data data;
 
     struct CanMap {
-        uint16_t canId;
+        int canId;
         int offset;
         float Data::* variable;
         float scale;
     };
 
-    static const int maxMappings = 20;
+    static const int maxMappings = 15;
     CanMap canMap[maxMappings];
     int numMappings = 0;
 

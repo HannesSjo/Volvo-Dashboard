@@ -32,11 +32,12 @@ void setup() {
 }
 
 void loop() {
+    unsigned long currentMicros = micros();
     canHandler.readMessage();
     //TODO read utility data ex speed
     Data data = canHandler.getData();
-    gaugeManager.updateGauges(data.rpm, 10.0, data.coolantTemp);
-    dataSender.sendData(data);
+    gaugeManager.updateGauges(data.rpm, 10.0, data.coolantTemp, currentMicros);
+    dataSender.sendData(data, currentMicros);
 
-    delay(1000 / RPS);
+    //delay(1000 / RPS);
 }

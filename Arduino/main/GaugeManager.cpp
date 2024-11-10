@@ -13,10 +13,10 @@ GaugeManager::GaugeManager(
   this->setup();
 }
 
-void GaugeManager::updateGauges(float rpm, float speed, float temp) {
-  updateRpm(rpm, micros());
-  updateSpeed(speed);
-  updateTemp(temp);
+void GaugeManager::updateGauges(float rpm, float speed, float temp, unsigned long currentMicros) {
+  updateRpm(rpm, currentMicros);
+  updateSpeed(speed, currentMicros);
+  updateTemp(temp, currentMicros);
 }
 
 // RPM
@@ -24,38 +24,46 @@ void GaugeManager::updateRpm(float rpm, long unsigned int currentMicros) {
   float pulseFrequency = (rpm * this->adjustment) / 60.0;
   float pulseIntervalMicros = 1000000.0 / pulseFrequency;
 
-  if (currentMicros - previousMicros >= pulseIntervalMicros) {
+  bool pulseState = false;
+
+  if (currentMicros - previousMicros >= pulseState ? this->pulseDuration : pulseIntervalMicros) {
     previousMicros = currentMicros;
 
-    analogWrite(this->rpmPwmPin, 255);
-    delayMicroseconds(this->pulseDuration);
-    analogWrite(this->rpmPwmPin, 0);
+    if (pulseState) 
+      analogWrite(this->rpmPwmPin, 0);
+    else
+      analogWrite(this->rpmPwmPin, 255);
+    pulseState = !pulseState;
   }
 }
 
 // SPEED
-void GaugeManager::updateSpeed(float speed) {
+void GaugeManager::updateSpeed(float speed, unsigned long currentMicros) {
+  static unsigned long lastToggleMicros = 0;
   unsigned long halfPeriod = this->getFrequency(speed);
+  static bool speedPinState = false;
 
-  digitalWrite(this->speedPwmPin, HIGH);
-  delayMicroseconds(halfPeriod);
-  
-  digitalWrite(this->speedPwmPin, LOW);
-  delayMicroseconds(halfPeriod);
+  if (currentMicros - lastToggleMicros >= halfPeriod) {
+    lastToggleMicros = currentMicros;
+    speedPinState = !speedPinState;
+    digitalWrite(this->speedPwmPin, speedPinState ? HIGH : LOW);
+  }
 }
 
 // TEMP
-void GaugeManager::updateTemp(float temp) {
-  // TODO
-  float t = this->calculateTemp(temp);
-  // Serial.println(t);
-  int pwmValue = map(this->dutyCycle, 0, 100, 0, 255);
-  analogWrite(this->tempPwmPin, pwmValue);
+void GaugeManager::updateTemp(float temp, unsigned long currentMillis) {
+  static unsigned long lastUpdateMillis = 0;
 
-  //dutyCycle--;
-  //if (dutyCycle <= 0) dutyCycle = 46;
+  if (currentMillis - lastUpdateMillis >= 100) {
+    lastUpdateMillis = currentMillis;
+    float t = this->calculateTemp(temp);
+    int pwmValue = map(this->dutyCycle, 0, 100, 0, 255);
+    analogWrite(this->tempPwmPin, pwmValue);
 
-  delay(100);
+    // Uncomment if you want to modify dutyCycle periodically
+    // dutyCycle--;
+    // if (dutyCycle <= 0) dutyCycle = 46;
+  }
 }
 
 // UTILS

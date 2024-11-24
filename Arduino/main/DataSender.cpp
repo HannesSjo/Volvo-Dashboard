@@ -3,9 +3,9 @@
 
 #include "Data.h"
 
-void DataSender::sendData(Data data) {
+void DataSender::sendData(Data data, unsigned long currentMicros) {
     //TODO logic
-    printAsJson(data);
+    printAsJson(data, currentMicros);
 }
 
 void DataSender::printAsJson(Data data, unsigned long currentMicros) {
@@ -13,8 +13,8 @@ void DataSender::printAsJson(Data data, unsigned long currentMicros) {
     const unsigned long printInterval = 500000;
 
     static unsigned long lastPrintMicros = 0;
-    if (currentMillis - lastPrintMillis >= printInterval) {
-        lastPrintMillis = currentMillis;
+    if (currentMicros - lastPrintMicros >= printInterval) {
+        lastPrintMicros = currentMicros;
 
         String jsonData = "{";
         jsonData += this->formatJsonField("RPM", data.rpm);

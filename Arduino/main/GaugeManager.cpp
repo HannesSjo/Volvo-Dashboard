@@ -1,6 +1,9 @@
 #include "GaugeManager.h"
 #include <Arduino.h>
 
+bool pulseState = false;
+
+
 GaugeManager::GaugeManager(
   float adjustment, int rpmPwmPin, int pulseDuration, 
   int speedPwmPin,
@@ -17,22 +20,21 @@ void GaugeManager::updateGauges(float rpm, float speed, float temp, unsigned lon
   updateRpm(rpm, currentMicros);
   updateSpeed(speed, currentMicros);
   updateTemp(temp, currentMicros);
+  updateGas(90.0, currentMicros);
 }
 
 // RPM
 void GaugeManager::updateRpm(float rpm, long unsigned int currentMicros) {
   float pulseFrequency = (rpm * this->adjustment) / 60.0;
   float pulseIntervalMicros = 1000000.0 / pulseFrequency;
+  int b = pulseState ? this->pulseDuration : pulseIntervalMicros;
 
-  bool pulseState = false;
-
-  if (currentMicros - previousMicros >= pulseState ? this->pulseDuration : pulseIntervalMicros) {
-    previousMicros = currentMicros;
-
+  if (currentMicros - this->previousMicros >= b) {
+    this->previousMicros = currentMicros;
     if (pulseState) 
-      analogWrite(this->rpmPwmPin, 0);
+      digitalWrite(this->rpmPwmPin, LOW);
     else
-      analogWrite(this->rpmPwmPin, 255);
+      digitalWrite(this->rpmPwmPin, HIGH);
     pulseState = !pulseState;
   }
 }
@@ -40,8 +42,10 @@ void GaugeManager::updateRpm(float rpm, long unsigned int currentMicros) {
 // SPEED
 void GaugeManager::updateSpeed(float speed, unsigned long currentMicros) {
   static unsigned long lastToggleMicros = 0;
-  unsigned long halfPeriod = this->getFrequency(speed);
   static bool speedPinState = false;
+  // unsigned long period = 1000000 / freq;
+  unsigned long halfPeriod = (1000000 / speed) / 2;
+  // unsigned long halfPeriod = this->getFrequency(speed);
 
   if (currentMicros - lastToggleMicros >= halfPeriod) {
     lastToggleMicros = currentMicros;
@@ -51,18 +55,23 @@ void GaugeManager::updateSpeed(float speed, unsigned long currentMicros) {
 }
 
 // TEMP
-void GaugeManager::updateTemp(float temp, unsigned long currentMillis) {
-  static unsigned long lastUpdateMillis = 0;
-
-  if (currentMillis - lastUpdateMillis >= 100) {
-    lastUpdateMillis = currentMillis;
+void GaugeManager::updateTemp(float temp, unsigned long currentMicros) {
+  static unsigned long lastUpdateMicros = 0;
+  
+  if (currentMicros - lastUpdateMicros >= 100) {
+    lastUpdateMicros = currentMicros;
     float t = this->calculateTemp(temp);
-    int pwmValue = map(this->dutyCycle, 0, 100, 0, 255);
-    analogWrite(this->tempPwmPin, pwmValue);
+    analogWrite(this->tempPwmPin, t);
+  }
+}
 
-    // Uncomment if you want to modify dutyCycle periodically
-    // dutyCycle--;
-    // if (dutyCycle <= 0) dutyCycle = 46;
+void GaugeManager::updateGas(float gas, unsigned long currentMicros) {
+  static unsigned long lastUpdateMicros = 0;
+  
+  if (currentMicros - lastUpdateMicros >= 100) {
+    lastUpdateMicros = currentMicros;
+    float t = this->calculateTemp(gas);
+    analogWrite(6, 255);
   }
 }
 
@@ -71,18 +80,24 @@ void GaugeManager::setup() {
   pinMode(this->rpmPwmPin, OUTPUT);
 
   pinMode(this->speedPwmPin, OUTPUT);
-  // this->setFrequency(frequency);
 
   pinMode(this->tempPwmPin, OUTPUT);
 }
 
 unsigned long GaugeManager::getFrequency(int freq) {
-  unsigned long period = 1000000 / freq;
-  // this->halfPeriod = period / 2;
-  return period / 2;
+  
 }
 
-float GaugeManager::calculateTemp(float temp) {
+int GaugeManager::calculateTemp(float temp) {
   // TODO
-  return temp;
+  // 25 pwm value = MIN, 70 C
+  // 108 pwm value = MID, 90 C
+  // 190 pwm value = MAX, 110 C
+
+  float value = 25 + (temp - 70) * (190 - 25) / (110 - 70);
+
+  if (value < 0) value = 0;
+  else if (value > 255) value = 255;
+
+  return static_cast<int>(value);
 }

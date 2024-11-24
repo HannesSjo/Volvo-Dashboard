@@ -37,22 +37,22 @@ void CANHandler::initializeCanMap() {
 
 void CANHandler::readMessage() {
     struct can_frame canMsg;
-    if(DEBUG) {
-      data.*(canMap[0].variable) += 1;
-      data.*(canMap[1].variable) += 1;
-      data.*(canMap[2].variable) += 0.01;
-      data.*(canMap[3].variable) += 0.01;
-      data.*(canMap[4].variable) += 1;
-      data.*(canMap[5].variable) += 0.1;
-      data.*(canMap[6].variable) += 1;
-      data.*(canMap[7].variable) += 0.1;
-      data.*(canMap[8].variable) += 1;
-      data.*(canMap[9].variable) += 0.1;
-      data.*(canMap[10].variable) += 1;
-      data.*(canMap[11].variable) += 0.1;
-      data.*(canMap[12].variable) += 1;
-      return;
-    }
+    // if(DEBUG) {
+    //   data.*(canMap[0].variable) += 1;
+    //   data.*(canMap[1].variable) += 1;
+    //   data.*(canMap[2].variable) += 0.01;
+    //   data.*(canMap[3].variable) += 0.01;
+    //   data.*(canMap[4].variable) += 1;
+    //   data.*(canMap[5].variable) += 0.1;
+    //   data.*(canMap[6].variable) += 1;
+    //   data.*(canMap[7].variable) += 0.1;
+    //   data.*(canMap[8].variable) += 1;
+    //   data.*(canMap[9].variable) += 0.1;
+    //   data.*(canMap[10].variable) += 1;
+    //   data.*(canMap[11].variable) += 0.1;
+    //   data.*(canMap[12].variable) += 1;
+    //   return;
+    // }
     if (mcp2515.readMessage(&canMsg) == MCP2515::ERROR_OK) {
         uint16_t canId = canMsg.can_id;
 

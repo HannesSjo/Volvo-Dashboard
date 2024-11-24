@@ -1,7 +1,7 @@
 #include "CanHandler.h"
 #include "GaugeManager.h"
-#include "DataSender.h"
 #include "UtilityDataHandler.h"
+#include "DataSender.h"
 #include "Data.h"
 
 // RPM Gauge
@@ -23,6 +23,7 @@ GaugeManager gaugeManager(
   tempPwmPin, dutyCycle                                   // Temp vars
 );
 DataSender dataSender;
+UtilityDataHandler utilHandler;
 
 struct can_frame canMsg;
 int RPS = 5;
@@ -36,9 +37,11 @@ void loop() {
     unsigned long currentMicros = micros();
     canHandler.readMessage();
     //TODO read utility data ex speed
+    float speed = utilHandler.getGpsSpeed();
+    // Serial.println(speed);
     Data data = canHandler.getData();
-    gaugeManager.updateGauges(data.rpm, 10.0, data.coolantTemp, currentMicros);
+    gaugeManager.updateGauges(data.rpm, speed + 10.0, data.coolantTemp, currentMicros);
     dataSender.sendData(data, currentMicros);
 
-    //delay(1000 / RPS);
+    // delayMicroseconds(20);
 }

@@ -6,10 +6,10 @@
 
 class DataSender {
 public:
-    void sendData(Data data);
+    void sendData(Data data, unsigned long currentMicros);
 
 private:
-    void printAsJson(Data data);
+    void printAsJson(Data data, unsigned long currentMicros);
     String formatJsonField(const String& key, float value, bool addComma = true);
 };
 

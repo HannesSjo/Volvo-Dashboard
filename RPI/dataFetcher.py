@@ -55,6 +55,6 @@ class DataFetcher:
     def find_arduino_serial(self):
         ports = list(serial.tools.list_ports.comports())
 
-        for p in ports:
-            if "Arduino" in p.description or (p.manufacturer is not None and "Arduino" in p.manufacturer):
-                self.ser = serial.Serial(p.device, 115200)
+        #for p in ports:
+            #if "Arduino" in p.description or (p.manufacturer is not None and "Arduino" in p.manufacturer):
+        self.ser = serial.Serial('/dev/ttyACM0', 115200)

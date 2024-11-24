@@ -1,6 +1,7 @@
 #include "CanHandler.h"
 #include "GaugeManager.h"
 #include "DataSender.h"
+#include "UtilityDataHandler.h"
 #include "Data.h"
 
 // RPM Gauge
